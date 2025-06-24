@@ -120,7 +120,7 @@ def test_model(model, test_loader, criterion, device):
 
 
 
-def conformal_prediction(model, alpha, calibration_loader, device):
+def conformal_prediction(model, alpha, calibration_loader, test_loader, device):
   model.to(device)
   model.eval()
 
@@ -131,7 +131,7 @@ def conformal_prediction(model, alpha, calibration_loader, device):
           images = images.to(device)
           labels = labels.to(device)
 
-          logits = classifier_model(images).squeeze(1) # Output is [batch_size, 1], squeeze to [batch_size]
+          logits = model(images).squeeze(1) # Output is [batch_size, 1], squeeze to [batch_size]
           probs_class1 = torch.sigmoid(logits) # P(Class=1)
 
           # Calculate nonconformity scores: 1 - P(true_class)
@@ -172,11 +172,11 @@ def conformal_prediction(model, alpha, calibration_loader, device):
 
 
   with torch.no_grad():
-    for i, (images, labels) in enumerate(calibration_loader):
+    for i, (images, labels) in enumerate(test_loader):
         images = images.to(device)
         labels = labels.to(device)
 
-        logits = classifier_model(images).squeeze(1)
+        logits = model(images).squeeze(1)
         probs_class1 = torch.sigmoid(logits) # P(Class=1)
 
         for j in range(images.size(0)):
@@ -224,6 +224,16 @@ def conformal_prediction(model, alpha, calibration_loader, device):
       print("\nAll predictions are two-class sets (model is highly uncertain or q_hat is too high).")
 
 
+  plt.figure(figsize=(8, 6))
+  plt.hist(all_set_sizes, bins=[0.5, 1.5, 2.5], rwidth=0.8, align='mid', edgecolor='black')
+  plt.xticks([1, 2])
+  plt.title('Distribution of Prediction Set Sizes')
+  plt.xlabel('Prediction Set Size')
+  plt.ylabel('Frequency')
+  plt.grid(axis='y', alpha=0.75)
+  plt.show()
+
+
   alphas = np.linspace(0.01, 0.5, 20) # Test a range of alpha values from 1% to 50%
   empirical_coverages = []
   desired_coverages = []
@@ -241,11 +251,11 @@ def conformal_prediction(model, alpha, calibration_loader, device):
       current_total_samples = 0
 
       with torch.no_grad():
-          for images, labels in calibration_loader:
+          for images, labels in test_loader:
               images = images.to(device)
               labels = labels.to(device)
 
-              logits = classifier_model(images).squeeze(1)
+              logits = model(images).squeeze(1)
               probs_class1 = torch.sigmoid(logits)
 
               for j in range(images.size(0)):
