@@ -1,4 +1,7 @@
 # Robust Brain MRI Classification on Latent Representations Leveraging Denoising Diffusion Probabilistic Models
+
+This project develops a robust medical image classification system working on latent representations of brain MRIs and leveraging **Denoising Diffusion Probabilistic Models**.
+
 ---
 
 ## Abstract
