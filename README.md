@@ -1,9 +1,5 @@
 # Robust Brain MRI Classification on Latent Representations Leveraging Denoising Diffusion Probabilistic Models
 
-This project develops a robust medical image classification system working on latent representations of brain MRIs and leveraging **Denoising Diffusion Probabilistic Models**.
-
----
-
 ## Abstract
 
 This project arises from the need to explore new techniques to improve image classification in the medical field, with particular focus on the reliability and robustness of predictions. The main motivation stems from the frequent presence of noise in medical images, which can undermine the accuracy of traditional classification models. Inspired by the recent research work ”Robust Classification via a Single Diffusion Model Classification”, we decided to implement a denoising diffusion model aimed at enhancing the model’s ability to handle noisy data, as well as leveraging this approach for data augmentation to effectively expand the training dataset. During development, we realized that using an autoencoder to work in a latent space could simplify the process and help improve model robustness Indeed, the latent dimension compresses information into a more compact, potentially more stable, and noise-resilient representation. The project structure involved building an autoencoder, followed by training a MLP classifieron the latent dimension output by the encoder. Subsequently, we integrated a diffusion model capable of providing noise-related information to the system, thus training the model to classify accurately even under uncertainty and image degradation. Finally, the complete model combines the encoder, a denoising module that “corrupts” and then “cleans” the latent representation, and a ResNet for final classification.
